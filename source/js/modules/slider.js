@@ -32,7 +32,8 @@ export default () => {
           }
         },
         observer: true,
-        observeParents: true
+        observeParents: true,
+        watchSlidesVisibility: true
       });
     } else {
       storySlider = new Swiper(`.js-slider`, {
@@ -66,7 +67,8 @@ export default () => {
           }
         },
         observer: true,
-        observeParents: true
+        observeParents: true,
+        watchSlidesVisibility: true
       });
     }
   };
