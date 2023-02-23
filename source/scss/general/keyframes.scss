@@ -1,4 +1,4 @@
-@keyframes fadeIn {
+@keyframes fadeInBottom {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -10,7 +10,7 @@
   }
 }
 
-@keyframes slideLeft {
+@keyframes maxWidth {
   from {
     max-width: 0;
   }
