@@ -1,0 +1,50 @@
+.page-header {
+  &__menu {
+    a {
+      &::after {
+        transition: width 0.3s ease;
+      }
+    }
+  }
+}
+
+.social-block {
+  &__toggler {
+    transition: color .4s ease, outline .4s ease;
+
+    &::before {
+      transition: width .4s ease, height .4s ease, border-color .4s ease;
+    }
+  }
+
+  &__list {
+    transition: opacity .4s ease;
+
+    li {
+      transition: opacity .4s ease, transform .4s ease;
+    }
+  }
+}
+
+.intro__message {
+  animation: fadeInBottom .4s ease .5s backwards;
+}
+
+.slider {
+  &__item {
+    &-text {
+      .swiper-slide-active.swiper-slide-visible & {
+        transition: opacity .7s ease .3s, transform .7s ease .3s;
+      }
+      .swiper-slide-next.swiper-slide-visible & {
+        transition: opacity .7s ease .5s, transform .7s ease .5s;
+      }
+    }
+  }
+}
+
+.form {
+  &__field {
+    animation: maxWidth 1s ease backwards;
+  }
+}
