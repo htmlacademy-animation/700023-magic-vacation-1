@@ -21,3 +21,22 @@ social();
 
 const fullPageScroll = new FullPageScroll();
 fullPageScroll.init();
+
+class App {
+  constructor() {
+    this.initEventListeners();
+  }
+
+  initEventListeners() {
+    window.addEventListener(`load`, () => {
+      this.onPageLoad();
+    });
+  }
+
+  onPageLoad() {
+    let body = document.querySelector(`body`);
+    body.classList.add(`page--loaded`);
+  }
+}
+
+const APP = new App();

@@ -1,8 +1,20 @@
 .page-header {
+  &__logo {
+    transition: opacity .5s $customTimeFunc .5s, transform .5s $customTimeFunc .5s;
+  }
+
   &__menu {
+    transition: opacity .5s $customTimeFunc .8s;
+
     a {
       &::after {
         transition: width 0.3s ease;
+      }
+
+      &.active {
+        &::after {
+          transition: width 0.3s ease 1s;
+        }
       }
     }
   }
@@ -14,6 +26,10 @@
 
     &::before {
       transition: width .4s ease, height .4s ease, border-color .4s ease;
+
+      .page--loaded & {
+        animation: socialBlockToggler .5s cubic-bezier(.25,.15,.36,1.3) 1s backwards;
+      }
     }
   }
 
@@ -26,8 +42,14 @@
   }
 }
 
+.screen {
+  &__footer {
+    transition: transform .5s $customTimeFunc;
+  }
+}
+
 .intro__message {
-  animation: fadeInBottom .4s ease .5s backwards;
+  animation: fadeInBottom .4s ease 1.5s backwards;
 }
 
 .slider {
