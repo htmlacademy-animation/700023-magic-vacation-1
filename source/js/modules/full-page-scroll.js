@@ -52,14 +52,28 @@ export default class FullPageScroll {
   }
 
   changeVisibilityDisplay() {
-    this.screenElements.forEach((screen) => {
-      screen.classList.add(`screen--hidden`);
-      screen.classList.remove(`active`);
-    });
-    this.screenElements[this.activeScreen].classList.remove(`screen--hidden`);
+    const activeScreen = this.screenElements[this.activeScreen];
+    const prevScreen = Array.from(this.screenElements).find((screen) => screen.classList.contains(`active`));
+    const timeoutHideScreen = prevScreen && prevScreen.classList.contains(`screen--end-fill`) ? 600 : 0;
+
+    if (prevScreen && timeoutHideScreen) {
+      prevScreen.classList.add(`screen--filling`);
+    }
+
     setTimeout(() => {
-      this.screenElements[this.activeScreen].classList.add(`active`);
-    }, 100);
+      this.screenElements.forEach((screen) => {
+        screen.classList.add(`screen--hidden`);
+        screen.classList.remove(`active`);
+      });
+      activeScreen.classList.remove(`screen--hidden`);
+      setTimeout(() => {
+        activeScreen.classList.add(`active`);
+
+        if (prevScreen) {
+          prevScreen.classList.remove(`screen--filling`);
+        }
+      }, 100);
+    }, timeoutHideScreen);
   }
 
   changeActiveMenuItem() {
