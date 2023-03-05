@@ -70,3 +70,15 @@
     animation: maxWidth 1s ease backwards;
   }
 }
+
+.screen--filling {
+  &::after {
+    transition: height .6s ease;
+  }
+
+  &.screen--story {
+    .slider {
+      transition: opacity .2s ease, transform .2s ease;
+    }
+  }
+}
