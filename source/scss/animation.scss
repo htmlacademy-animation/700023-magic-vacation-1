@@ -20,6 +20,14 @@
   }
 }
 
+.btn {
+  transition: color .5s;
+
+  &::before {
+    transition: width .5s, opacity .2s;
+  }
+}
+
 .social-block {
   &__toggler {
     transition: color .4s ease, outline .4s ease;
@@ -79,6 +87,66 @@
   &.screen--story {
     .slider {
       transition: opacity .2s ease, transform .2s ease;
+    }
+  }
+}
+
+.rules {
+  &__item {
+    &::before {
+      transition: color .2s, transform .3s $customTimeFuncOver;
+    }
+
+    p {
+      transition: opacity .5s, transform .3s;
+    }
+
+    &:nth-child(1) {
+      &::before {
+        transition-delay: .1s, .0s;
+      }
+
+      p {
+        transition-delay: .2s;
+      }
+    }
+
+    &:nth-child(2) {
+      &::before {
+        transition-delay: .3s, .2s;
+      }
+
+      p {
+        transition-delay: .4s;
+      }
+    }
+
+    &:nth-child(3) {
+      &::before {
+        transition-delay: .5s, .4s;
+      }
+
+      p {
+        transition-delay: .6s;
+      }
+    }
+
+    &:nth-child(4) {
+      &::before {
+        transition-delay: .7s, .6s;
+      }
+
+      p {
+        transition-delay: .8s;
+      }
+    }
+  }
+
+  &__link {
+    transition-delay: 1.2s;
+
+    &::before {
+      transition-delay: 1s;
     }
   }
 }

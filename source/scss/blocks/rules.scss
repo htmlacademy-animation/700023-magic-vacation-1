@@ -155,10 +155,17 @@
     font-family: $font-alt;
     font-weight: 400;
     font-size: 2.4rem;
+    color: transparent;
     background-color: $c-purple;
     border-radius: 50%;
     line-height: 5rem;
     text-align: center;
+    transform: scale(0);
+
+    .screen.active & {
+      color: $c-light;
+      transform: scale(1);
+    }
 
     @media (max-width: $tablet) and (orientation: portrait) {
       top: 1rem;
@@ -179,6 +186,13 @@
 
   p {
     margin: 0;
+    opacity: 0;
+    transform: translateX(20px);
+
+    .screen.active & {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     @media (max-width: $tablet) and (orientation: portrait) {
       min-height: calc(1.4rem * 2.2);
