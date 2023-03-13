@@ -8,8 +8,12 @@
   font-weight: 400;
   font-size: 2.4rem;
   line-height: 3rem;
-  color: $c-dark;
+  color: transparent;
   letter-spacing: -0.04em;
+
+  .screen.active & {
+    color: $c-dark;
+  }
 
   @media (min-width: $stop-scaling) {
     padding: 15px 29px;
@@ -29,14 +33,22 @@
   }
 
   &::before {
-    @include center;
+    position: absolute;
+    top: 0;
+    right: 0;
     content: "";
-    width: 100%;
+    width: 50px;
     height: 100%;
     background-color: $c-light;
     border: 2px solid $c-light;
     border-radius: 3.5rem;
     z-index: -1;
+    opacity: 0;
+
+    .screen.active & {
+      width: 100%;
+      opacity: 1;
+    }
   }
 
   &:hover {
