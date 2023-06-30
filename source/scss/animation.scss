@@ -60,6 +60,10 @@
   animation: fadeInBottom .4s ease 1.5s backwards;
 }
 
+.intro__label {
+  animation: fadeIn .4s ease 2s backwards;
+}
+
 .slider {
   &__item {
     &-text {

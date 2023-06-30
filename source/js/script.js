@@ -8,6 +8,7 @@ import result from './modules/result.js';
 import form from './modules/form.js';
 import social from './modules/social.js';
 import FullPageScroll from './modules/full-page-scroll';
+import AccentTypographyBuild from './modules/accent-typography-builder';
 
 // init modules
 mobileHeight();
@@ -36,6 +37,24 @@ class App {
   onPageLoad() {
     let body = document.querySelector(`body`);
     body.classList.add(`page--loaded`);
+
+    const animationTopScreenIntroTitle = new AccentTypographyBuild(`.intro__title`, 500, `text-animate`, `transform`, 500);
+    animationTopScreenIntroTitle.runAnimation();
+
+    const animationTopScreenIntroDate = new AccentTypographyBuild(`.intro__date`, 500, `text-animate`, `transform`, 1600);
+    animationTopScreenIntroDate.runAnimation();
+
+    const animationTopScreenSliderItemTitle = new AccentTypographyBuild(`.slider__item-title`, 500, `text-animate`, `transform`, 100);
+    animationTopScreenSliderItemTitle.runAnimation();
+
+    const animationTopScreenSliderPrizesTitle = new AccentTypographyBuild(`.prizes__title`, 500, `text-animate`, `transform`, 100);
+    animationTopScreenSliderPrizesTitle.runAnimation();
+
+    const animationTopScreenSliderRulesTitle = new AccentTypographyBuild(`.rules__title`, 500, `text-animate`, `transform`, 100);
+    animationTopScreenSliderRulesTitle.runAnimation();
+
+    const animationTopScreenSliderGameTitle = new AccentTypographyBuild(`.game__title`, 500, `text-animate`, `transform`, 100);
+    animationTopScreenSliderGameTitle.runAnimation();
   }
 }
 
