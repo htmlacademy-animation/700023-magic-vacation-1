@@ -205,6 +205,15 @@
   bottom: 6rem;
   right: 5.6rem;
 
+  &::before {
+    opacity: 0;
+
+    .screen.active & {
+      width: 100%;
+      opacity: 1;
+    }
+  }
+
   @media (min-width: $stop-scaling) {
     bottom: 60px;
     right: 56px;

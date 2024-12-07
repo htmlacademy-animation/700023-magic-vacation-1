@@ -99,3 +99,26 @@ img {
   clip: rect(0 0 0 0);
   overflow: hidden;
 }
+
+.screen.active {
+  .text-animate {
+    .slogan__word {
+      span {
+        transform: translateY(0) !important;
+        will-change: auto; // Освобождаем ресурсы
+      }
+    }
+  }
+}
+
+.slogan__word {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+
+  span {
+    display: inline-block;
+    transform: translateY(150%);
+    will-change: transform;
+  }
+}

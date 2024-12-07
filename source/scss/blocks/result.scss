@@ -52,6 +52,21 @@
     object-fit: cover;
     object-position: center;
   }
+
+  &-inner {
+    position: relative;
+    width: 100%;
+    max-width: 730px;
+    margin-top: 175px;
+
+    img {
+      &:not(:first-child) {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
 }
 
 .result__title {

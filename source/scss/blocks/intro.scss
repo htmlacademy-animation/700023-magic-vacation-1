@@ -30,8 +30,18 @@
   font-family: $font-alt;
   font-weight: 400;
   font-size: 12rem;
-  line-height: 0.906;
+  line-height: 1.226; 
   letter-spacing: -0.04em;
+
+  .slogan__word {
+    &:first-child {
+      margin: -20px 0 -10px;
+    }
+
+    &:last-child {
+      margin-top: -56px;
+    }
+  }
 
   @media (min-width: $stop-scaling) {
     max-width: 990px;
