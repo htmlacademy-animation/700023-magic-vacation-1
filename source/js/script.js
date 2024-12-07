@@ -41,6 +41,9 @@ class App {
     const animationTopScreenIntroTitle = new AccentTypographyBuild(`.intro__title`, 500, `text-animate`, `transform`, 500);
     animationTopScreenIntroTitle.runAnimation();
 
+    const animationTopScreenIntroLable = new AccentTypographyBuild(`.intro__label`, 500, `text-animate`, `transform`, 1600);
+    animationTopScreenIntroLable.runAnimation();
+
     const animationTopScreenIntroDate = new AccentTypographyBuild(`.intro__date`, 500, `text-animate`, `transform`, 1600);
     animationTopScreenIntroDate.runAnimation();
 
