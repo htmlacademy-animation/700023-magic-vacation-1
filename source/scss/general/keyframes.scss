@@ -179,3 +179,25 @@
     transform: translateY(0) scale(1);
   }
 }
+
+@keyframes sliderControlPrev {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px) rotate(-90deg);
+  }
+
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+}
+
+@keyframes sliderControlNext {
+  0% {
+    opacity: 0;
+    transform: translateX(20px) rotate(90deg);
+  }
+
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+}
