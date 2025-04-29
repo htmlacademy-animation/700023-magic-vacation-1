@@ -178,3 +178,27 @@
     transform-origin: 38% 68%;
   }
 }
+
+.slider {
+  &__pagination {
+    animation: fadeIn .3s ease-out .7s backwards;
+  }
+
+  &__control {
+    &--prev {
+      animation: sliderControlPrev .3s ease-out .7s backwards;
+    }
+
+    &--next {
+      animation: sliderControlNext .3s ease-out .7s backwards;
+    }
+  }
+}
+
+.result__button {
+  animation: fadeIn .3s ease-out .7s backwards;
+
+  span {
+    animation: sliderControlNext .3s ease-out 1s backwards;
+  }
+}
