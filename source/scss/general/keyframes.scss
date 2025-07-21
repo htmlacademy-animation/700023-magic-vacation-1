@@ -207,3 +207,23 @@
     stroke-dashoffset: 0;
   }
 }
+
+@keyframes prizesItemJourneys {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes prizesItemCodes {
+  from {
+    transform: translateX(50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

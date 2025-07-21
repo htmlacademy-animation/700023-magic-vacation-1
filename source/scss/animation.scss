@@ -202,3 +202,23 @@
     animation: sliderControlNext .3s ease-out 1s backwards;
   }
 }
+
+.prizes {
+  &__lead {
+    animation: fadeInBottom .7s ease .5s backwards;
+  }
+
+  &__item {
+    &--journeys {
+      animation: fadeIn .4s linear 0s backwards, prizesItemJourneys .8s ease 2.5s backwards;
+    }
+
+    &--cases {
+      animation: fadeIn .4s linear 3s backwards;
+    }
+
+    &--codes {
+      animation: fadeIn .4s linear 6s backwards, prizesItemCodes .8s ease 6s backwards;
+    }
+  }
+}
