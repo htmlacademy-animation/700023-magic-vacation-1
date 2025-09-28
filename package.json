@@ -55,6 +55,7 @@
     "source/sass/**/*.{sass,scss}"
   ],
   "dependencies": {
+    "gsap": "^3.13.0",
     "normalize.css": "8.0.1",
     "swiper": "5.3.8",
     "three": "0.115.0"
