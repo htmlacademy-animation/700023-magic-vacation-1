@@ -11,6 +11,7 @@ import FullPageScroll from './modules/full-page-scroll';
 import AccentTypographyBuild from './modules/accent-typography-builder';
 import initGameTimer from './modules/game';
 import prizes from './modules/prizes';
+import history from './modules/history';
 
 // init modules
 mobileHeight();
@@ -23,6 +24,7 @@ form();
 social();
 initGameTimer();
 prizes();
+history();
 
 const fullPageScroll = new FullPageScroll();
 fullPageScroll.init();
