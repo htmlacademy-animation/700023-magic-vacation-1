@@ -28,11 +28,51 @@ void main() {
 precision mediump float;
 
 uniform sampler2D map;
+uniform float degree; // сила сдвига [0..1]
 varying vec2 vUv;
 
+// вспомогательная функция RGB->HSV
+vec3 rgb2hsv(vec3 c) {
+  vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
+  vec4 p = mix(vec4(c.bg, K.wz),
+               vec4(c.gb, K.xy),
+               step(c.b, c.g));
+  vec4 q = mix(vec4(p.xyw, c.r),
+               vec4(c.r, p.yzx),
+               step(p.x, c.r));
+
+  float d = q.x - min(q.w, q.y);
+  float e = 1.0e-10;
+  return vec3(abs(q.z + (q.w - q.y) / (6.0*d + e)),
+              d / (q.x + e),
+              q.x);
+}
+
+// вспомогательная функция HSV->RGB
+vec3 hsv2rgb(vec3 c) {
+  vec3 rgb = clamp( abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0),
+                    6.0) - 3.0) - 1.0,
+                    0.0,
+                    1.0 );
+  return c.z * mix(vec3(1.0), rgb, c.y);
+}
+
 void main() {
-  vec4 texel = texture2D( map, vUv );
-	gl_FragColor = texel;
+  vec4 texel = texture2D(map, vUv);
+
+  // переводим в HSV
+  vec3 hsv = rgb2hsv(texel.rgb);
+
+  // сдвигаем оттенок (Hue). degree ~ 0.0...1.0
+  // например, 0.0 = синий, 1.0 = голубой
+  hsv.x += degree * 0.1; // 0.1 ~ 36° на цветовом круге
+
+  hsv.x = mod(hsv.x, 1.0); // чтобы не вышло за диапазон [0..1]
+
+  // обратно в RGB
+  vec3 rgb = hsv2rgb(hsv);
+
+  gl_FragColor = vec4(rgb, texel.a);
 }
 `;
 
@@ -59,7 +99,8 @@ void main() {
   const targetHeight = 2.2;
   const materials = sources.map((link) => new THREE.RawShaderMaterial({
     uniforms: {
-      map: { value: loader.load(link) }
+      map: { value: loader.load(link) },
+      degree: { value: 0.0 }
     },
     side: THREE.DoubleSide,
     transparent: true,
@@ -70,6 +111,8 @@ void main() {
   // Вставляем слайды
   const meshes = [];
   loadManager.onLoad = () => {
+    let lastPosition = 0;
+
     materials.forEach((material, i) => {
       const { width, height } = material.uniforms.map.value.image;
       const aspect = width / height;
@@ -78,7 +121,14 @@ void main() {
       const geo = new THREE.PlaneGeometry(planeW, planeH);
       const mesh = new THREE.Mesh(geo, material);
 
-      mesh.position.z = -i * (planeW + gap);
+      if (i <= 1) {
+        mesh.position.z = -i * (planeW + gap);
+        lastPosition = mesh.position.z;
+      } else {
+        mesh.position.z = lastPosition;
+        mesh.position.x = planeW * (i - 1);
+      }
+
       scene.add(mesh);
       meshes.push(mesh);
     });
@@ -109,6 +159,29 @@ void main() {
       });
     } else {
       camera.position.z = 2.6;
+    }
+  });
+
+  document.getElementById(`story`).addEventListener(`slideChanged`, (e) => {
+    const index = e.detail.swiper.snapIndex;
+
+    gsap.to(camera.position, {
+      x: index * 4.4,
+      duration: 2,
+      ease: `power2.inOut`
+    });
+
+    if (index === 1) {
+      gsap.to(materials[2].uniforms.degree, {
+        value: 0.2,
+        duration: 2,
+        delay: 1.8,
+      });
+    } else {
+      gsap.to(materials[2].uniforms.degree, {
+        value: 0.0,
+        duration: 2,
+      });
     }
   });
 };

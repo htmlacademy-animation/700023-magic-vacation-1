@@ -3,6 +3,15 @@ import Swiper from "swiper";
 export default () => {
   let storySlider;
   let sliderContainer = document.getElementById(`story`);
+  const dispatchSlideChangeEvent = () => {
+    const event = new CustomEvent(`slideChanged`, {
+      detail: {
+        swiper: storySlider
+      }
+    });
+
+    sliderContainer.dispatchEvent(event);
+  };
   sliderContainer.style.backgroundImage = `url("img/slide1.jpg"), linear-gradient(180deg, rgba(83, 65, 118, 0) 0%, #523E75 16.85%)`;
 
   const setSlider = function () {
@@ -26,6 +35,8 @@ export default () => {
             } else if (storySlider.activeIndex === 6 || storySlider.activeIndex === 7) {
               sliderContainer.style.backgroundImage = `url("img/slide4.jpg"), linear-gradient(180deg, rgba(45, 39, 63, 0) 0%, #2F2A42 16.85%)`;
             }
+
+            dispatchSlideChangeEvent();
           },
           resize: () => {
             storySlider.update();
@@ -61,6 +72,8 @@ export default () => {
             } else if (storySlider.activeIndex === 6) {
               sliderContainer.style.backgroundImage = `url("img/slide4.jpg")`;
             }
+
+            dispatchSlideChangeEvent();
           },
           resize: () => {
             storySlider.update();
