@@ -29,6 +29,12 @@ precision mediump float;
 
 uniform sampler2D map;
 uniform float degree; // сила сдвига [0..1]
+
+#define NUM_BUBBLES 3
+uniform vec2  uCenters[NUM_BUBBLES];   // центры в UV (0..1)
+uniform float uRadii[NUM_BUBBLES];     // радиусы в UV
+uniform float uStrengths[NUM_BUBBLES]; // 0..1 сила искажения
+
 varying vec2 vUv;
 
 // вспомогательная функция RGB->HSV
@@ -57,18 +63,31 @@ vec3 hsv2rgb(vec3 c) {
   return c.z * mix(vec3(1.0), rgb, c.y);
 }
 
+// -------- пузырь (bulge) -----
+vec2 warpBubble(vec2 uv, vec2 center, float radius, float strength){
+  vec2 d = uv - center;
+  float r = length(d);
+  if (r > radius || radius <= 0.0) return uv;
+  float nd = r / radius;                  // 0..1
+  float k = 1.0 - strength * (1.0 - nd*nd); // мягкий профиль: центр растягивается
+  vec2 warped = center + d * k;
+  return clamp(warped, vec2(0.0), vec2(1.0));
+}
+
 void main() {
-  vec4 texel = texture2D(map, vUv);
+  // 1) применяем 3 пузырика к UV
+  vec2 uv = vUv;
+  for (int i = 0; i < NUM_BUBBLES; i++){
+    uv = warpBubble(uv, uCenters[i], uRadii[i], uStrengths[i]);
+  }
 
-  // переводим в HSV
+  // 2) выборка текстуры
+  vec4 texel = texture2D(map, uv);
+
+  // 3) Hue-сдвиг: синий (~0.666) в сторону голубого (~0.5) на ~0.166 * degree
   vec3 hsv = rgb2hsv(texel.rgb);
-
-  // сдвигаем оттенок (Hue). degree ~ 0.0...1.0
-  // например, 0.0 = синий, 1.0 = голубой
   hsv.x += degree * 0.1; // 0.1 ~ 36° на цветовом круге
-
   hsv.x = mod(hsv.x, 1.0); // чтобы не вышло за диапазон [0..1]
-
   // обратно в RGB
   vec3 rgb = hsv2rgb(hsv);
 
@@ -97,16 +116,37 @@ void main() {
 
   const gap = 0.4;
   const targetHeight = 2.2;
-  const materials = sources.map((link) => new THREE.RawShaderMaterial({
-    uniforms: {
-      map: { value: loader.load(link) },
-      degree: { value: 0.0 }
-    },
-    side: THREE.DoubleSide,
-    transparent: true,
-    vertexShader,
-    fragmentShader,
-  }));
+  const materials = sources.map((link, index) => {
+    const hasBubble = index === 2;
+    const bubbleCenters = hasBubble
+      ? [
+        new THREE.Vector2(0.30, 0.55),
+        new THREE.Vector2(0.65, 0.40),
+        new THREE.Vector2(0.50, 0.75)
+      ]
+      : [
+        new THREE.Vector2(0.0, 0.0),
+        new THREE.Vector2(0.0, 0.0),
+        new THREE.Vector2(0.0, 0.0)
+      ];
+
+    const bubbleRadii = hasBubble ? [0.18, 0.2, 0.15] : [0.0, 0.0, 0.0];
+    const bubbleStrengths = hasBubble ? [0.65, 0.85, 0.60] : [0.0, 0.0, 0.0];
+
+    return new THREE.RawShaderMaterial({
+      uniforms: {
+        map: { value: loader.load(link) },
+        degree: { value: 0.0 },
+        uCenters: { value: bubbleCenters },
+        uRadii: { value: bubbleRadii },
+        uStrengths: { value: bubbleStrengths }
+      },
+      side: THREE.DoubleSide,
+      transparent: true,
+      vertexShader,
+      fragmentShader,
+    });
+  });
 
   // Вставляем слайды
   const meshes = [];
@@ -162,7 +202,15 @@ void main() {
     }
   });
 
-  document.getElementById(`story`).addEventListener(`slideChanged`, (e) => {
+  const storyElement = document.getElementById(`story`);
+  const bubbleMaterial = materials[2];
+  const bubbleCenter = bubbleMaterial ? bubbleMaterial.uniforms.uCenters.value[1] : null;
+  const initialBubbleCenter = bubbleCenter ? bubbleCenter.clone() : null;
+  const bubbleSwingAmplitude = 0.12;
+  let bubbleRiseTween = null;
+  let bubbleSwingTween = null;
+
+  storyElement.addEventListener(`slideChanged`, (e) => {
     const index = e.detail.swiper.snapIndex;
 
     gsap.to(camera.position, {
@@ -177,11 +225,45 @@ void main() {
         duration: 2,
         delay: 1.8,
       });
+
+      if (bubbleCenter) {
+        if (bubbleRiseTween) {
+          bubbleRiseTween.kill();
+        }
+        if (bubbleSwingTween) {
+          bubbleSwingTween.kill();
+        }
+
+        bubbleRiseTween = gsap.to(bubbleCenter, {
+          y: 1.15,
+          duration: 3,
+          repeat: -1,
+          ease: `none`
+        });
+
+        bubbleSwingTween = gsap.to(bubbleCenter, {
+          x: bubbleCenter.x + bubbleSwingAmplitude,
+          duration: 1,
+          repeat: -1,
+          yoyo: true,
+          ease: `sine.inOut`
+        });
+      }
     } else {
       gsap.to(materials[2].uniforms.degree, {
         value: 0.0,
         duration: 2,
       });
+
+      if (bubbleCenter && initialBubbleCenter) {
+        if (bubbleRiseTween) {
+          bubbleRiseTween.kill();
+        }
+        if (bubbleSwingTween) {
+          bubbleSwingTween.kill();
+        }
+        bubbleCenter.copy(initialBubbleCenter);
+      }
     }
   });
 };
