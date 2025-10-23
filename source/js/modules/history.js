@@ -37,6 +37,10 @@ uniform float uStrengths[NUM_BUBBLES]; // 0..1 сила искажения
 
 varying vec2 vUv;
 
+const float BUBBLE_OUTLINE_WIDTH = 0.015;
+const float HIGHLIGHT_RADIUS_RATIO = 0.65;
+const float ADDITIVE_INTENSITY = 0.15;
+
 // вспомогательная функция RGB->HSV
 vec3 rgb2hsv(vec3 c) {
   vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
@@ -74,6 +78,19 @@ vec2 warpBubble(vec2 uv, vec2 center, float radius, float strength){
   return clamp(warped, vec2(0.0), vec2(1.0));
 }
 
+float ringMask(float dist, float radius, float width) {
+  float inner = smoothstep(radius - width, radius, dist);
+  float outer = 1.0 - smoothstep(radius, radius + width, dist);
+  return inner * outer;
+}
+
+float highlightAngularMask(vec2 dir) {
+  float xMask = smoothstep(0.0, 0.5, -dir.x);
+  float yMask = smoothstep(0.0, 0.5, dir.y);
+  float diagMask = smoothstep(-0.2, 0.6, dir.y - dir.x);
+  return xMask * yMask * diagMask;
+}
+
 void main() {
   // 1) применяем 3 пузырика к UV
   vec2 uv = vUv;
@@ -91,9 +108,31 @@ void main() {
   // обратно в RGB
   vec3 rgb = hsv2rgb(hsv);
 
+  // 4) Добавляем обводку и блик поверх базового цвета
+  vec3 additive = vec3(0.0);
+  for (int i = 0; i < NUM_BUBBLES; i++) {
+    float radius = uRadii[i];
+    float active = step(0.0001, radius);
+    vec2 center = uCenters[i];
+    vec2 delta = vUv - center;
+    float dist = length(delta);
+    vec2 dir = dist > 0.0 ? delta / dist : vec2(0.0);
+
+    float outlineMask = ringMask(dist, radius, BUBBLE_OUTLINE_WIDTH) * active;
+    float highlightRadius = radius * HIGHLIGHT_RADIUS_RATIO;
+    float highlightMask = ringMask(dist, highlightRadius, BUBBLE_OUTLINE_WIDTH) * active;
+    highlightMask *= highlightAngularMask(dir);
+
+    float bubbleContribution = outlineMask + highlightMask;
+    additive += vec3(1.0) * ADDITIVE_INTENSITY * bubbleContribution;
+  }
+
+  rgb = clamp(rgb + additive, 0.0, 1.0);
+
   gl_FragColor = vec4(rgb, texel.a);
 }
 `;
+
 
   const renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setClearColor(new THREE.Color(0x5f458c), 0.6);
@@ -130,7 +169,7 @@ void main() {
         new THREE.Vector2(0.0, 0.0)
       ];
 
-    const bubbleRadii = hasBubble ? [0.18, 0.2, 0.15] : [0.0, 0.0, 0.0];
+    const bubbleRadii = hasBubble ? [0.018, 0.012, 0.015] : [0.0, 0.0, 0.0];
     const bubbleStrengths = hasBubble ? [0.65, 0.85, 0.60] : [0.0, 0.0, 0.0];
 
     return new THREE.RawShaderMaterial({
