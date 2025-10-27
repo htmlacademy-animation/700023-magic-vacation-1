@@ -5,3 +5,4 @@ module5-task6
 module5-task7
 module6-task1
 module6-task2
+module6-task3
