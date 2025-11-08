@@ -21,3 +21,4 @@ module7-task2
 module7-task3
 module7-task4
 module7-task5
+module7-task6
